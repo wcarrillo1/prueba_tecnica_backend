@@ -175,6 +175,7 @@ namespace prueba_back_end.Controllers
                     cmd.Parameters.AddWithValue("@nit", request.nit);
                     cmd.Parameters.AddWithValue("@direccion", request.direccion);
                     cmd.Parameters.AddWithValue("@tipoPersona", request.tipo_persona);
+                    cmd.Parameters.AddWithValue("@municipio", Convert.ToInt32(request.municipio).ToString());
                     SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                     DataSet setter = new DataSet();
 
@@ -237,8 +238,8 @@ namespace prueba_back_end.Controllers
                     cmd.Parameters.AddWithValue("@apellidos", request.apellidos);
                     cmd.Parameters.AddWithValue("@nit", request.nit);
                     cmd.Parameters.AddWithValue("@direccion", request.direccion);
-                    cmd.Parameters.AddWithValue("@tipo_persona", request.tipo_persona);
-
+                    cmd.Parameters.AddWithValue("@tipoPersona", request.tipo_persona);
+                    cmd.Parameters.AddWithValue("@municipio", Convert.ToInt32(request.municipio).ToString());
                     SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                     DataSet setter = new DataSet();
 

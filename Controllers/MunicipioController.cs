@@ -232,6 +232,7 @@ namespace prueba_back_end.Controllers
                     cmd.Parameters.AddWithValue("@opcion", 2);
                     cmd.Parameters.AddWithValue("@id", request.id);
                     cmd.Parameters.AddWithValue("@nombre", request.nombre);
+                    cmd.Parameters.AddWithValue("@departamento", Convert.ToInt32(request.departamento).ToString());
 
                     SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                     DataSet setter = new DataSet();
@@ -470,5 +471,74 @@ namespace prueba_back_end.Controllers
                 return BadRequest(result.Payback());
             }
         }
+
+        [HttpPost]
+        [Route("oneMun")]
+        //[Authorize]
+        public IActionResult OneMun(JObject request)
+        {
+            Responses result;
+
+            if (!request.ContainsKey("id"))
+            {
+                result = new Responses(2011, null);
+                return BadRequest(result.Payback());
+            }
+
+            if (string.IsNullOrEmpty(request.GetValue("id").ToString()))
+            {
+                result = new Responses(2001, null);
+                return BadRequest(result.Payback());
+            }
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                }
+                catch (Exception ex)
+                {
+                    result = new Responses(1001, ex.ToString());
+                    return BadRequest(result.Payback());
+                }
+
+                int id = Int32.Parse(request.GetValue("id").ToString());
+
+                using (SqlCommand cmd = new SqlCommand(_nameProcedure, conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@opcion", 7);
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                    DataSet setter = new DataSet();
+
+                    try
+                    {
+                        adapter.Fill(setter, "tabla");
+                        if (setter.Tables["tabla"] == null)
+                        {
+                            result = new Responses(7001, null);
+                            return BadRequest(result.Payback());
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        result = new Responses(1002, ex.ToString());
+                        return BadRequest(result.Payback());
+                    }
+
+                    if (setter.Tables["tabla"].Rows.Count <= 0)
+                    {
+                        result = new Responses(2009, null);
+                        return BadRequest(result.Payback());
+                    }
+
+                    return Ok(setter.Tables["tabla"]);
+                }
+            }
+        }
+
     }
 }
